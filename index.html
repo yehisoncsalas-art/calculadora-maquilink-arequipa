@@ -81,31 +81,62 @@ tr.tot td{font-weight:700;border-bottom:none}
 button{padding:9px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:14px;cursor:pointer}
 button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
 @media print{.noprint{display:none}body{background:#fff}.card{break-inside:avoid}}
-/* Resumen de opciones: un bloque por producto, cada uno con su color */
-.fams{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(440px,100%),1fr));gap:16px}
-.fam{--c:var(--ah);--cs:var(--ah-soft);--cl:var(--ah-line);border:1px solid var(--cl);border-radius:14px;overflow:hidden;background:var(--card);min-width:0}
-.fam.ap{--c:var(--ap);--cs:var(--ap-soft);--cl:var(--ap-line)}
-.fam-hd{background:var(--cs);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--cl)}
-.fam-hd .ttl{font-family:var(--f-display);font-weight:800;font-size:19px;color:var(--c);letter-spacing:-.02em;line-height:1.15}
-.fam-hd .ttl small{display:block;font-family:var(--f-body);font-weight:500;font-size:12.5px;color:var(--muted);letter-spacing:0}
-.fam-hd .pill{font-size:12px;font-weight:600;color:var(--c);border:1px solid var(--c);border-radius:999px;padding:3px 10px;white-space:nowrap}
-.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(190px,100%),1fr));gap:10px;padding:12px}
-.tile{position:relative;display:flex;flex-direction:column;gap:10px;text-align:left;padding:14px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font:inherit;cursor:pointer;min-width:0;transition:border-color .15s,box-shadow .15s}
-.tile:hover{border-color:var(--c)}
-.tile:focus-visible{outline:2px solid var(--c);outline-offset:2px}
-.tile.sel{border-color:var(--c);box-shadow:0 0 0 2px var(--c);background:var(--cs)}
-.tile .nm{font-family:var(--f-display);font-weight:700;font-size:15.5px;letter-spacing:-.01em;padding-right:24px}
-.tile .check{position:absolute;top:12px;right:12px;width:20px;height:20px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:12px;font-weight:800;color:transparent}
-.tile.sel .check{background:var(--c);border-color:var(--c);color:var(--card)}
-.tile .cuota{font-family:var(--f-display);font-size:28px;font-weight:800;color:var(--c);font-variant-numeric:tabular-nums;line-height:1;letter-spacing:-.02em}
-.tile .cuota small{font-family:var(--f-body);font-size:13px;font-weight:500;color:var(--muted);letter-spacing:0}
-.tile .lbl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:-6px}
-.tile dl{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;margin:0;font-size:13.5px;border-top:1px dashed var(--line);padding-top:8px}
-.tile dt{color:var(--muted)}
-.tile dd{margin:0;text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
-.tile .badges{display:flex;flex-wrap:wrap;gap:6px}
-.tile.off .cuota{color:var(--muted)}
-@media (prefers-reduced-motion:reduce){.tile{transition:none}}
+/* App bancaria: resultado protagonista + barras deslizables */
+.top{margin-bottom:16px}
+.app{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:18px;align-items:start;margin-bottom:16px}
+@media (max-width:860px){.app{grid-template-columns:minmax(0,1fr)}}
+.col-main{display:flex;flex-direction:column;gap:14px;min-width:0}
+.hero-card{--h:#0e2f2b;--hm:#8cc9bf;--hc:#5fe0cb;background:var(--h);color:#fff;border-radius:20px;padding:22px 22px 18px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.hero-card.ap{--h:#1c1a4a;--hm:#aaa6e8;--hc:#b3adff}
+.hero-card .r1{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap}
+.hero-card .fam{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--hc)}
+.hero-card .pn{font-family:var(--f-display);font-weight:700;font-size:17px;letter-spacing:-.01em}
+.hero-card .ent{font-size:12px;font-weight:600;border:1px solid var(--hm);color:var(--hm);border-radius:999px;padding:3px 10px;white-space:nowrap}
+.hero-card .big{font-family:var(--f-display);font-weight:800;font-size:clamp(38px,9vw,52px);line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.hero-card .big small{font-family:var(--f-body);font-size:15px;font-weight:500;color:var(--hm);letter-spacing:0}
+.hero-card .pen{font-size:13px;color:var(--hm);margin-top:4px}
+.hero-card .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;border-top:1px solid rgba(255,255,255,.14);padding-top:12px}
+.hero-card .stats .l{font-size:11.5px;color:var(--hm)}
+.hero-card .stats .v{font-family:var(--f-display);font-weight:700;font-size:clamp(12.5px,3.5vw,16px);font-variant-numeric:tabular-nums;white-space:nowrap;letter-spacing:-.02em}
+@media (max-width:420px){.hero-card{padding:18px 16px 16px}.hero-card .stats{gap:6px}}
+.hero-card .r3{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-size:12.5px;color:var(--hm)}
+.hero-card .st{font-size:12px;font-weight:700;border-radius:999px;padding:4px 10px;background:rgba(95,207,143,.18);color:#7fe0a8}
+.hero-card .st.bad{background:rgba(242,139,130,.18);color:#ffaaa2}
+.prod{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.prod .grp{--c:var(--ah);--cs:var(--ah-soft);display:flex;flex-direction:column;gap:6px;min-width:0}
+.prod .grp.ap{--c:var(--ap);--cs:var(--ap-soft)}
+.prod .gl{font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--c)}
+.prod .pills{display:flex;gap:6px;flex-wrap:wrap}
+.pill-b{flex:1 1 auto;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:8px 12px;font:600 13.5px var(--f-body);cursor:pointer;white-space:nowrap}
+.pill-b:hover{border-color:var(--c)}
+.pill-b:focus-visible{outline:2px solid var(--c);outline-offset:2px}
+.pill-b.sel{background:var(--c);border-color:var(--c);color:var(--card)}
+.inputs{display:flex;flex-direction:column;gap:16px;margin-bottom:0}
+.field-r .row{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
+.field-r label{margin:0;font-size:14px;color:var(--ink);font-weight:500}
+.field-r .pct{color:var(--muted);font-weight:400}
+.num{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:10px;background:var(--bg);padding:0 10px;max-width:170px}
+.num span{color:var(--muted);font-size:14px}
+.num input{border:none;background:transparent;padding:8px 0;font:700 17px var(--f-display);text-align:right;width:100%;min-width:0}
+.num input:focus{outline:none}
+.num:focus-within{outline:2px solid var(--accent)}
+input[type=range]{width:100%;padding:0;border:none;background:transparent;accent-color:var(--ink);height:28px}
+.form2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(180px,100%),1fr));gap:12px}
+.cta{width:100%;padding:15px;border-radius:14px;border:none;background:var(--ink);color:var(--card);font:700 16px var(--f-display);cursor:pointer;letter-spacing:-.01em}
+.cta:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.cmp{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.crow{--c:var(--ah);--cs:var(--ah-soft);display:grid;grid-template-columns:10px minmax(0,1fr) auto;gap:4px 10px;align-items:center;text-align:left;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);padding:12px;font:inherit;cursor:pointer}
+.crow.ap{--c:var(--ap);--cs:var(--ap-soft)}
+.crow:hover{border-color:var(--c)}
+.crow:focus-visible{outline:2px solid var(--c);outline-offset:2px}
+.crow.sel{border-color:var(--c);background:var(--cs);box-shadow:0 0 0 1px var(--c)}
+.crow .dot{width:10px;height:10px;border-radius:50%;background:var(--c)}
+.crow .n{font-weight:600;font-size:14px}
+.crow .f{font-size:12px;color:var(--muted)}
+.crow .q{text-align:right;font-family:var(--f-display);font-weight:800;font-size:17px;color:var(--c);font-variant-numeric:tabular-nums}
+.crow .q small{display:block;font-family:var(--f-body);font-weight:500;font-size:11.5px;color:var(--muted)}
+.crow .tags{grid-column:2 / 4;display:flex;gap:6px;flex-wrap:wrap}
+.crow.off{opacity:.65}
 details.det summary{cursor:pointer;font-family:var(--f-display);font-weight:700;font-size:15px}
 details.det .subp{border:1px solid var(--line);border-radius:10px;padding:14px;min-width:0}
 /* Proforma: hoja de papel, siempre clara (se descarga como documento) */
@@ -156,24 +187,37 @@ details.det .subp{border:1px solid var(--line);border-radius:10px;padding:14px;m
 </head>
 <body>
 <div class="wrap">
-  <h1>Calculadora Maquilink Arequipa</h1>
-  <p class="sub">Auto Ahorro grupo avanzado (80 meses, ingreso en la cuota 30) y Auto Pronto (60 meses) adelantando 24 o 18 cuotas. Montos en US$ con IGV según tarifario.</p>
-
-  <div class="card noprint">
-    <div class="form">
-      <div><label for="unidad">Unidad (marca / modelo)</label><input id="unidad" placeholder="Ej. Toyota Yaris 2026"></div>
-      <div><label for="precio">Precio de la unidad (US$)</label><input id="precio" type="number" min="0" step="100" value="16000"></div>
-      <div><label for="inicial">Inicial del cliente (US$)</label><input id="inicial" type="number" min="0" step="100" value="8000"></div>
-      <div><label for="cliente">Cliente (opcional)</label><input id="cliente" placeholder="Nombre del cliente"></div>
-    </div>
-    <p class="note" style="margin:10px 0 0">Los certificados se eligen solos: la combinación que da el monto exacto o el más cercano por encima del precio (máx. US$ 72,000), con la menor cantidad de certificados.</p>
-  </div>
-
+  <header class="top">
+    <h1>Calculadora Maquilink Arequipa</h1>
+    <p class="sub" style="margin:0">Auto Ahorro y Auto Pronto · montos en US$ con IGV según tarifario</p>
+  </header>
   <div id="error"></div>
-  <div class="card">
-    <h2>Opciones para el cliente</h2>
-    <p class="note" style="margin:0 0 12px">Toca una opción para usarla en la proforma.</p>
-    <div class="fams" id="resumen"></div>
+  <div class="app">
+    <div class="col-main">
+      <section class="hero-card" id="hero" aria-live="polite"></section>
+      <nav class="prod" id="prodChips" aria-label="Producto"></nav>
+      <div class="card inputs">
+        <div class="field-r">
+          <div class="row"><label for="precio">Precio de la unidad</label><div class="num"><span>US$</span><input id="precio" type="number" min="0" step="100" value="16000" inputmode="numeric"></div></div>
+          <input type="range" id="precioR" min="12000" max="72000" step="100" value="16000" aria-label="Precio de la unidad">
+        </div>
+        <div class="field-r">
+          <div class="row"><label for="inicial">Inicial <span class="pct" id="pctIni"></span></label><div class="num"><span>US$</span><input id="inicial" type="number" min="0" step="100" value="8000" inputmode="numeric"></div></div>
+          <input type="range" id="inicialR" min="0" max="16000" step="100" value="8000" aria-label="Inicial del cliente">
+        </div>
+        <div class="form2">
+          <div><label for="unidad">Unidad (marca / modelo)</label><input id="unidad" placeholder="Ej. Toyota Yaris 2026"></div>
+          <div><label for="cliente">Cliente (opcional)</label><input id="cliente" placeholder="Nombre del cliente"></div>
+        </div>
+        <p class="note" style="margin:0">Los certificados se eligen solos: el monto exacto o el más cercano por encima del precio (máx. US$ 72,000).</p>
+      </div>
+      <button type="button" class="cta" id="goPf">Generar proforma</button>
+    </div>
+    <aside class="card" style="margin:0">
+      <h2>Comparar opciones</h2>
+      <p class="note" style="margin:2px 0 0">Toca una para verla arriba y usarla en la proforma.</p>
+      <div class="cmp" id="resumen"></div>
+    </aside>
   </div>
   <details class="card det" id="detalle">
     <summary>Ver detalle del cálculo</summary>
@@ -183,7 +227,7 @@ details.det .subp{border:1px solid var(--line);border-radius:10px;padding:14px;m
     </div>
   </details>
 
-  <div class="card">
+  <div class="card" id="pfCard">
     <h2>Proforma</h2>
     <p class="note" style="margin:0 0 12px">Elige el producto que vas a ofrecer y descarga la proforma en PDF o imagen. Los montos salen de los datos de arriba.</p>
     <div class="pf-layout">
@@ -364,57 +408,83 @@ function render(){
   const inicial = parseFloat(document.getElementById('inicial').value)||0;
   const err = document.getElementById('error');
   const A = document.getElementById('ahorro'), P = document.getElementById('pronto');
-  if (precio <= 0){ err.innerHTML = '<div class="msg warn">Ingresa el precio de la unidad.</div>'; A.innerHTML=P.innerHTML=''; $('resumen').innerHTML=''; renderProforma(); return; }
-  if (precio > MAX_UNIDAD){ err.innerHTML = `<div class="msg bad">La unidad no puede pasar de US$ ${MAX_UNIDAD.toLocaleString('en-US')}.</div>`; A.innerHTML=P.innerHTML=''; $('resumen').innerHTML=''; renderProforma(); return; }
-  const u = document.getElementById('unidad').value.trim(), cl = document.getElementById('cliente').value.trim();
-  err.innerHTML = (u||cl) ? `<div class="card" style="padding:12px 18px"><b>${esc(u||'Unidad')}</b> · ${usd(precio)} · inicial ${usd(inicial)}${cl?` · Cliente: ${esc(cl)}`:''}</div>` : '';
+  if (precio <= 0){ err.innerHTML = '<div class="msg warn">Ingresa el precio de la unidad.</div>'; A.innerHTML=P.innerHTML=''; $('resumen').innerHTML=''; $('hero').innerHTML=''; $('prodChips').innerHTML=''; renderProforma(); return; }
+  if (precio > MAX_UNIDAD){ err.innerHTML = `<div class="msg bad">La unidad no puede pasar de US$ ${MAX_UNIDAD.toLocaleString('en-US')}.</div>`; A.innerHTML=P.innerHTML=''; $('resumen').innerHTML=''; $('hero').innerHTML=''; $('prodChips').innerHTML=''; renderProforma(); return; }
+  err.innerHTML = '';
   A.innerHTML = calcAhorro(precio, inicial);
   P.innerHTML = calcPronto(precio, inicial);
   renderResumen(precio, inicial);
   renderProforma();
 }
 
-// Resumen: solo lo que necesitan el asesor y el cliente
-function renderResumen(precio, inicial){
-  const ops = opciones(precio, inicial), sel = $('pfProd').value;
-  const viables = Object.keys(ops).filter(k=>ops[k].ok && !(ops[k].falta > 0.005));
-  const menorCuota = viables.reduce((m,k)=> m===null || ops[k].cuota < ops[m].cuota ? k : m, null);
-  const menorTotal = viables.reduce((m,k)=> m===null || ops[k].total < ops[m].total ? k : m, null);
-  const NOMBRE_CORTO = { ah_rc:'Reducir cuota', ah_rp:'Reducir plazo', ap_24:'Adelanta 24 cuotas', ap_18:'Adelanta 18 cuotas' };
-  const tile = k => {
-    const x = ops[k];
-    const falta = x.falta > 0.005, viable = x.ok && !falta;
-    let estado;
-    if (!x.ok) estado = `<span class="tag bad">Inicial insuficiente</span>`;
-    else if (falta) estado = `<span class="tag bad">Faltan ${usd(x.falta)}</span>`;
-    else estado = `<span class="tag ok">Inicial alcanza</span>`;
-    const extras = [];
-    if (k === menorCuota) extras.push('<span class="tag ok">Cuota más baja</span>');
-    if (k === menorTotal) extras.push('<span class="tag ok">Menor total</span>');
-    return `<button type="button" class="tile${k===sel?' sel':''}${viable?'':' off'}" data-k="${k}" aria-pressed="${k===sel}">
-      <span class="check" aria-hidden="true">✓</span>
-      <div class="nm">${NOMBRE_CORTO[k]}</div>
-      <div class="lbl">Cuota mensual</div>
-      <div class="cuota">${x.ok ? usd(Math.max(x.cuota,0)) : '—'} <small>/ mes</small></div>
-      <dl>
-        <dt>Inicial</dt><dd>${usd(x.inicial)}</dd>
-        <dt>Plazo</dt><dd>${x.plazo.replace(/ \+ 1 final de US\$ [\d,.]+/,' + 1 final')}</dd>
-        <dt>Total</dt><dd>${usd(x.total)}</dd>
-      </dl>
-      <div class="badges">${estado}${extras.join('')}</div>
-    </button>`;
-  };
-  const familia = (cls, titulo, sub, pill, keys) => `<section class="fam ${cls}" aria-label="${titulo}">
-      <div class="fam-hd"><div class="ttl">${titulo}<small>${sub}</small></div><span class="pill">${pill}</span></div>
-      <div class="tiles">${keys.map(tile).join('')}</div>
-    </section>`;
-  $('resumen').innerHTML =
-    familia('ah', 'Auto Ahorro', `Grupo avanzado · 80 meses · certificado ${ops.ah_rc.cert}`, 'Entrega por remate', ['ah_rc','ah_rp']) +
-    familia('ap', 'Auto Pronto', `60 meses · certificado ${ops.ap_24.cert}`, 'Entrega inmediata', ['ap_24','ap_18']);
+// Resumen estilo app bancaria: tarjeta grande, botones de producto y lista comparativa
+const CORTO = { ah_rc:'Reducir cuota', ah_rp:'Reducir plazo', ap_24:'Adelanta 24', ap_18:'Adelanta 18' };
+const LARGO = { ah_rc:'Reducir cuota', ah_rp:'Reducir plazo', ap_24:'Adelantando 24 cuotas', ap_18:'Adelantando 18 cuotas' };
+const FAM = k => k.startsWith('ah') ? 'ah' : 'ap';
+const plazoCorto = t => t.replace(/ \+ 1 final de US\$ [\d,.]+/,' + 1');
+function estadoDe(x){
+  if (!x.ok) return { bad:true, txt:'Inicial insuficiente' };
+  if (x.falta > 0.005) return { bad:true, txt:'Faltan ' + usd(x.falta) };
+  return { bad:false, txt:'Inicial alcanza' };
 }
-document.getElementById('resumen').addEventListener('click', e=>{
-  const t = e.target.closest('.tile'); if (!t) return;
+function renderResumen(precio, inicial){
+  const ops = opciones(precio, inicial), sel = $('pfProd').value, x = ops[sel], f = FAM(sel), e = estadoDe(x);
+  const viables = Object.keys(ops).filter(k=>!estadoDe(ops[k]).bad);
+  const menor = (campo) => viables.reduce((m,k)=> m===null || ops[k][campo] < ops[m][campo] ? k : m, null);
+  const menorCuota = menor('cuota'), menorTotal = menor('total');
+
+  $('pctIni').textContent = precio > 0 ? '· ' + Math.round(inicial / precio * 100) + '% del precio' : '';
+
+  $('hero').className = 'hero-card ' + f;
+  $('hero').innerHTML = `
+    <div class="r1"><div><div class="fam">${f==='ah' ? 'Auto Ahorro · grupo avanzado' : 'Auto Pronto · 60 meses'}</div><div class="pn">${LARGO[sel]}</div></div>
+      <span class="ent">${x.entrega === 'Inmediata' ? 'Entrega inmediata' : 'Entrega por remate'}</span></div>
+    <div><div class="big">${x.ok ? usd(Math.max(x.cuota,0)) : '—'} <small>/ mes</small></div>
+      ${x.ok ? `<div class="pen">S/ ${fmt(Math.max(x.cuota,0) * x.tc)} al mes</div>` : ''}</div>
+    <div class="stats">
+      <div><div class="l">Inicial</div><div class="v">${usd(x.inicial)}</div></div>
+      <div><div class="l">Plazo</div><div class="v">${plazoCorto(x.plazo)}</div></div>
+      <div><div class="l">Total</div><div class="v">${usd(x.total)}</div></div>
+    </div>
+    <div class="r3"><span class="st${e.bad?' bad':''}">${e.txt}</span><span>Certificado ${x.cert}</span></div>`;
+
+  const pill = k => `<button type="button" class="pill-b${k===sel?' sel':''}" data-k="${k}" aria-pressed="${k===sel}">${CORTO[k]}</button>`;
+  $('prodChips').innerHTML = `
+    <div class="grp ah"><span class="gl">Auto Ahorro</span><div class="pills">${pill('ah_rc')}${pill('ah_rp')}</div></div>
+    <div class="grp ap"><span class="gl">Auto Pronto</span><div class="pills">${pill('ap_24')}${pill('ap_18')}</div></div>`;
+
+  $('resumen').innerHTML = Object.keys(ops).map(k=>{
+    const y = ops[k], ey = estadoDe(y), tags = [];
+    tags.push(`<span class="tag ${ey.bad?'bad':'ok'}">${ey.txt}</span>`);
+    if (k === menorCuota) tags.push('<span class="tag ok">Cuota más baja</span>');
+    if (k === menorTotal) tags.push('<span class="tag ok">Menor total</span>');
+    return `<button type="button" class="crow ${FAM(k)}${k===sel?' sel':''}${ey.bad?' off':''}" data-k="${k}" aria-pressed="${k===sel}">
+      <span class="dot" aria-hidden="true"></span>
+      <span><span class="n">${LARGO[k]}</span><br><span class="f">${FAM(k)==='ah'?'Auto Ahorro':'Auto Pronto'} · inicial ${usd(y.inicial)} · ${plazoCorto(y.plazo)}</span></span>
+      <span class="q">${y.ok ? fmt(Math.max(y.cuota,0)) : '—'}<small>US$ / mes</small></span>
+      <span class="tags">${tags.join('')}</span>
+    </button>`;
+  }).join('');
+}
+['resumen','prodChips'].forEach(id=>document.getElementById(id).addEventListener('click', e=>{
+  const t = e.target.closest('[data-k]'); if (!t) return;
   $('pfProd').value = t.dataset.k; render();
+}));
+
+// Barras deslizables sincronizadas con los campos
+function syncRangos(origen){
+  const P = $('precio'), PR = $('precioR'), I = $('inicial'), IR = $('inicialR');
+  if (origen === 'precioR') P.value = PR.value;
+  if (origen === 'inicialR') I.value = IR.value;
+  const precio = parseFloat(P.value) || 0;
+  PR.value = Math.min(Math.max(precio, +PR.min), +PR.max);
+  IR.max = Math.max(precio, 100);
+  IR.value = Math.min(parseFloat(I.value) || 0, +IR.max);
+}
+['precioR','inicialR'].forEach(id=>document.getElementById(id).addEventListener('input', ()=>{ syncRangos(id); render(); }));
+['precio','inicial'].forEach(id=>document.getElementById(id).addEventListener('input', ()=>syncRangos(id)));
+document.getElementById('goPf').addEventListener('click', ()=>{
+  document.getElementById('pfCard').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block:'start' });
 });
 
 // ===== Proforma =====
