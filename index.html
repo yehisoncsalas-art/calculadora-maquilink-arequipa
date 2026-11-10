@@ -66,6 +66,47 @@ tr.tot td{font-weight:700;border-bottom:none}
 button{padding:9px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:14px;cursor:pointer}
 button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
 @media print{.noprint{display:none}body{background:#fff}.card{break-inside:avoid}}
+/* Proforma: hoja de papel, siempre clara (se descarga como documento) */
+.pf-layout{display:grid;grid-template-columns:minmax(0,260px) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:760px){.pf-layout{grid-template-columns:minmax(0,1fr)}}
+.pf-panel{display:flex;flex-direction:column;gap:10px}
+.pf-panel .chk{display:flex;gap:8px;align-items:center;font-size:14px;color:var(--ink)}
+.pf-panel .chk input{width:auto}
+.pf-panel fieldset{border:1px solid var(--line);border-radius:8px;padding:10px;margin:0;display:flex;flex-direction:column;gap:8px}
+.pf-panel legend{font-size:12px;color:var(--muted);padding:0 4px}
+.pf-panel button{width:100%}
+.pf-scroll{overflow-x:auto;min-width:0;border-radius:10px}
+.sheet{--pk:#1c2128;--pm:#5b6470;--pl:#dde2e8;--pa:#0b5cad;--pas:#eaf2fb;
+  background:#fff;color:var(--pk);width:100%;max-width:794px;padding:34px 38px;border:1px solid var(--line);border-radius:10px;font-size:13px;line-height:1.45}
+.sheet.cap{width:794px;max-width:none;border:none;border-radius:0}
+.sheet .hd{display:flex;justify-content:space-between;gap:16px;border-bottom:2px solid var(--pk);padding-bottom:12px;margin-bottom:14px}
+.sheet .brand{font-size:20px;font-weight:700;letter-spacing:-.01em}
+.sheet .muted{color:var(--pm)}
+.sheet .meta{text-align:right;font-size:12px;color:var(--pm);white-space:nowrap}
+.sheet .who{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 18px;margin-bottom:14px}
+.sheet .hero{background:var(--pas);border:1px solid #c9dcf2;border-radius:8px;padding:14px 16px;margin-bottom:14px}
+.sheet .hero .t{color:var(--pa);font-weight:700;font-size:14px;margin-bottom:10px}
+.sheet .hero .k{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.sheet .hero .l{font-size:11px;color:var(--pm);text-transform:uppercase;letter-spacing:.04em}
+.sheet .hero .v{font-size:18px;font-weight:700;font-variant-numeric:tabular-nums}
+.sheet .hero .s{font-size:11px;color:var(--pm)}
+.sheet h4{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--pm);margin:14px 0 6px}
+.sheet table td,.sheet table th{border-bottom:1px solid var(--pl);padding:5px 2px;color:var(--pk)}
+.sheet table th{color:var(--pm);font-size:11px}
+.sheet .warnbox{background:#fff4e0;color:#8a4b00;border-radius:6px;padding:8px 10px;margin-bottom:12px;font-size:12px}
+.sheet .fine{font-size:11px;color:var(--pm);margin-top:12px}
+.sheet .ft{border-top:1px solid var(--pk);margin-top:16px;padding-top:8px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:12px}
+#pfMsg{font-size:13px;min-height:1em}
+@media (max-width:560px){
+  .sheet:not(.cap){padding:18px 16px}
+  .sheet:not(.cap) .hd{flex-direction:column;gap:6px}
+  .sheet:not(.cap) .meta{text-align:left}
+  .sheet:not(.cap) .who{grid-template-columns:minmax(0,1fr)}
+  .sheet:not(.cap) .hero .k{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .sheet:not(.cap) .hero .v{font-size:16px}
+  .sheet:not(.cap) table{font-size:12px}
+  .sheet:not(.cap) td:first-child{min-width:130px}
+}
 </style>
 </head>
 <body>
@@ -90,10 +131,43 @@ button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
   </div>
 
   <div class="card">
+    <h2>Proforma</h2>
+    <p class="note" style="margin:0 0 12px">Elige el producto que vas a ofrecer y descarga la proforma en PDF o imagen. Los montos salen de los datos de arriba.</p>
+    <div class="pf-layout">
+      <div class="pf-panel">
+        <div><label for="pfProd">Producto a entregar</label>
+          <select id="pfProd">
+            <option value="ah_rc">Auto Ahorro – reducir cuota</option>
+            <option value="ah_rp">Auto Ahorro – reducir plazo</option>
+            <option value="ap_24">Auto Pronto – adelantando 24 cuotas</option>
+            <option value="ap_18">Auto Pronto – adelantando 18 cuotas</option>
+          </select></div>
+        <label class="chk"><input type="checkbox" id="pfComp" checked> Incluir las otras opciones</label>
+        <div><label for="pfCel">Celular del cliente (opcional)</label><input id="pfCel" inputmode="tel" placeholder="Opcional"></div>
+        <div><label for="pfVal">Válida por (días)</label><input id="pfVal" type="number" min="1" max="60" value="7"></div>
+        <fieldset>
+          <legend>Datos del asesor (opcional)</legend>
+          <div><label for="asNom">Nombre</label><input id="asNom" placeholder="Opcional"></div>
+          <div><label for="asCel">Celular / WhatsApp</label><input id="asCel" inputmode="tel" placeholder="Opcional"></div>
+          <div><label for="asLug">Punto de venta</label><input id="asLug" placeholder="Opcional"></div>
+          <span class="note">Se guardan solo en este equipo. Si los dejas vacíos, la proforma sale sin datos del asesor.</span>
+        </fieldset>
+        <button class="primary" id="btnPdf" type="button">Descargar PDF</button>
+        <button id="btnPng" type="button">Descargar imagen</button>
+        <button id="btnShare" type="button">Compartir</button>
+        <div id="pfMsg" class="note" role="status"></div>
+      </div>
+      <div class="pf-scroll"><div class="sheet" id="sheet"></div></div>
+    </div>
+  </div>
+
+  <div class="card">
     <h2>Notas</h2>
     <p class="note">Cálculo referencial, sujeto a evaluación, contrato y cronograma oficial. El desgravamen (≈0.05% mensual del certificado) y el seguro vehicular van aparte. En Auto Ahorro grupo avanzado la entrega es por remate: confirmar la adjudicación con el resultado de la asamblea. Montos en soles calculados con el tipo de cambio de cada tabla (80 meses S/ 3.403; 60 meses S/ 3.781).</p>  </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 // ===== Tablas oficiales (Tablas_Certificados_Maquimas.xlsx) =====
 const T80 = { tc:3.403, plazo:80, rows:[
@@ -145,8 +219,8 @@ function tablaCerts(sel, tc){
   return h + '</table>';
 }
 
-function calcAhorro(precio, inicial){
-  const sel = elegirCertificados(T80, precio); const tc = T80.tc;
+function datosAhorro(precio, inicial){
+  const sel = elegirCertificados(T80, precio);
   const cuotaAv = sel.cuota * T80.plazo / AV.restantes;        // =(H13*80)/51
   const pagoIngreso = sel.ins + cuotaAv;                        // inscripción + 1ra cuota
   const remate = inicial - pagoIngreso;                         // monto remate
@@ -158,6 +232,21 @@ function calcAhorro(precio, inicial){
   const saldo = cuotaAv * quedan - remate;
   const enteras = Math.floor(plazoReducido + 1e-9);
   const ultima = saldo - enteras * cuotaAv;
+  return {sel,cuotaAv,pagoIngreso,remate,quedan,remateCuotasGrupo,reduceCuota,cuotasReducidas,plazoReducido,saldo,enteras,ultima};
+}
+function datosPronto(precio, inicial){
+  const sel = elegirCertificados(T60, precio); const c = sel.cuota;
+  const op = [
+    { n:24, adel:c*24, resto:36, cuota:c, formula:`cuota de tabla` },
+    { n:18, adel:c*18, resto:36, cuota:c*60/54, formula:`${fmt(c)} × 60 ÷ 54` }   // =G13*60/54
+  ];
+  op.forEach(o=>{ o.entrada = sel.ins + o.adel; o.falta = o.entrada - inicial; o.total = o.entrada + o.cuota*o.resto; });
+  return {sel, op};
+}
+
+function calcAhorro(precio, inicial){
+  const tc = T80.tc;
+  const {sel,cuotaAv,pagoIngreso,remate,quedan,remateCuotasGrupo,reduceCuota,cuotasReducidas,plazoReducido,saldo,enteras,ultima} = datosAhorro(precio, inicial);
 
   let h = `<h2>Auto Ahorro – grupo avanzado</h2><p class="note" style="margin:0">80 meses · ingresa en la cuota ${AV.ingreso} · ${AV.restantes} cuotas por pagar</p>`;
   h += '<h3>Certificados</h3>' + chips(sel) + tablaCerts(sel, tc);
@@ -192,16 +281,12 @@ function calcAhorro(precio, inicial){
 }
 
 function calcPronto(precio, inicial){
-  const sel = elegirCertificados(T60, precio); const tc = T60.tc; const c = sel.cuota;
-  const op = [
-    { n:24, adel:c*24, resto:36, cuota:c, formula:`cuota de tabla` },
-    { n:18, adel:c*18, resto:36, cuota:c*60/54, formula:`${fmt(c)} × 60 ÷ 54` }   // =G13*60/54
-  ];
+  const tc = T60.tc;
+  const {sel, op} = datosPronto(precio, inicial); const c = sel.cuota;
   let h = `<h2>Auto Pronto</h2><p class="note" style="margin:0">60 meses · entrega inmediata al adelantar cuotas</p>`;
   h += '<h3>Certificados</h3>' + chips(sel) + tablaCerts(sel, tc);
   if (sel.suma > precio) h += `<p class="note">Cubre US$ ${fmt(sel.suma)} (US$ ${fmt(sel.suma-precio)} sobre el precio).</p>`;
   let elegido = null;
-  op.forEach(o=>{ o.entrada = sel.ins + o.adel; o.falta = o.entrada - inicial; o.total = o.entrada + o.cuota*o.resto; });
   // recomendada: la de 24 si alcanza, si no la de 18 si alcanza
   elegido = op.find(o=>o.falta<=0);
   op.forEach(o=>{
@@ -226,13 +311,144 @@ function render(){
   const inicial = parseFloat(document.getElementById('inicial').value)||0;
   const err = document.getElementById('error');
   const A = document.getElementById('ahorro'), P = document.getElementById('pronto');
-  if (precio <= 0){ err.innerHTML = '<div class="msg warn">Ingresa el precio de la unidad.</div>'; A.innerHTML=P.innerHTML=''; return; }
-  if (precio > MAX_UNIDAD){ err.innerHTML = `<div class="msg bad">La unidad no puede pasar de US$ ${MAX_UNIDAD.toLocaleString('en-US')}.</div>`; A.innerHTML=P.innerHTML=''; return; }
+  if (precio <= 0){ err.innerHTML = '<div class="msg warn">Ingresa el precio de la unidad.</div>'; A.innerHTML=P.innerHTML=''; renderProforma(); return; }
+  if (precio > MAX_UNIDAD){ err.innerHTML = `<div class="msg bad">La unidad no puede pasar de US$ ${MAX_UNIDAD.toLocaleString('en-US')}.</div>`; A.innerHTML=P.innerHTML=''; renderProforma(); return; }
   const u = document.getElementById('unidad').value.trim(), cl = document.getElementById('cliente').value.trim();
   err.innerHTML = (u||cl) ? `<div class="card" style="padding:12px 18px"><b>${esc(u||'Unidad')}</b> · ${usd(precio)} · inicial ${usd(inicial)}${cl?` · Cliente: ${esc(cl)}`:''}</div>` : '';
   A.innerHTML = calcAhorro(precio, inicial);
   P.innerHTML = calcPronto(precio, inicial);
+  renderProforma();
 }
+
+// ===== Proforma =====
+const $ = id => document.getElementById(id);
+const store = {
+  get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } },
+  set(k,v){ try { localStorage.setItem(k,v); } catch(e){} }
+};
+const NOMBRES = { ah_rc:'Auto Ahorro grupo avanzado – reducir cuota', ah_rp:'Auto Ahorro grupo avanzado – reducir plazo', ap_24:'Auto Pronto – adelantando 24 cuotas', ap_18:'Auto Pronto – adelantando 18 cuotas' };
+const certTxt = sel => sel.combo.map(r=>'US$ '+r[0].toLocaleString('en-US')).join(' + ');
+const fecha = d => d.toLocaleDateString('es-PE',{day:'2-digit',month:'2-digit',year:'numeric'});
+
+// Resume cada producto con los mismos cálculos de la calculadora
+function opciones(precio, inicial){
+  const a = datosAhorro(precio, inicial), p = datosPronto(precio, inicial);
+  const okA = a.remate > 0;
+  const plazoRp = a.enteras + (a.ultima > 0.005 ? ' cuotas + 1 final de ' + usd(a.ultima) : ' cuotas');
+  const baseA = [['Certificado(s) 80 meses', certTxt(a.sel)], ['Cuota de inscripción', usd(a.sel.ins)], ['1ra cuota grupo avanzado (al ingresar)', usd(a.cuotaAv)], ['Monto para remate', usd(Math.max(a.remate,0))]];
+  const o = {
+    ah_rc: { ok:okA, tc:T80.tc, inicial, cuota:a.reduceCuota, plazo:a.quedan+' cuotas', total:inicial+a.saldo, entrega:'Por remate',
+      det:[...baseA, ['Cuota después de adjudicar', usd(a.reduceCuota)+' × '+a.quedan]] },
+    ah_rp: { ok:okA, tc:T80.tc, inicial, cuota:a.cuotaAv, plazo:plazoRp, total:inicial+a.saldo, entrega:'Por remate',
+      det:[...baseA, ['Cuotas que se reducen', fmt(a.cuotasReducidas)], ['Cuota después de adjudicar', usd(a.cuotaAv)]] }
+  };
+  p.op.forEach(x=>{
+    o['ap_'+x.n] = { ok:true, falta:x.falta, tc:T60.tc, inicial:x.entrada, cuota:x.cuota, plazo:x.resto+' cuotas', total:x.total, entrega:'Inmediata',
+      det:[['Certificado(s) 60 meses', certTxt(p.sel)], ['Cuota de inscripción', usd(p.sel.ins)], ['Adelanto de '+x.n+' cuotas', usd(x.adel)], ['Inicial necesaria', usd(x.entrada)], ['Cuota mensual', usd(x.cuota)+' × '+x.resto]] };
+  });
+  return o;
+}
+
+function siguienteNumero(){
+  const y = new Date().getFullYear();
+  const n = (parseInt(store.get('pf_num_'+y),10) || 0) + 1;
+  return { y, n, txt: y + '-' + String(n).padStart(4,'0') };
+}
+
+function renderProforma(){
+  const sh = $('sheet');
+  const precio = parseFloat($('precio').value)||0, inicial = parseFloat($('inicial').value)||0;
+  if (precio <= 0 || precio > MAX_UNIDAD){ sh.innerHTML = '<p class="muted">Ingresa un precio válido para ver la proforma.</p>'; return; }
+  const ops = opciones(precio, inicial), key = $('pfProd').value, x = ops[key];
+  const hoy = new Date(), dias = Math.max(1, parseInt($('pfVal').value,10) || 7);
+  const vence = new Date(hoy.getTime() + dias*864e5);
+  const cliente = $('cliente').value.trim(), cel = $('pfCel').value.trim(), unidad = $('unidad').value.trim();
+  const asNom = $('asNom').value.trim(), asCel = $('asCel').value.trim(), asLug = $('asLug').value.trim();
+
+  let h = `<div class="hd"><div><div class="brand">Maquilink Arequipa</div><div class="muted">Proforma referencial · Financiamiento vehicular por fondo colectivo</div></div>
+    <div class="meta">N° ${siguienteNumero().txt}<br>Fecha: ${fecha(hoy)}<br>Válida hasta: ${fecha(vence)}</div></div>`;
+  h += `<div class="who">
+    <div><span class="muted">Cliente:</span> ${cliente ? esc(cliente) : '—'}</div>
+    <div><span class="muted">Celular:</span> ${cel ? esc(cel) : '—'}</div>
+    <div><span class="muted">Unidad:</span> ${unidad ? esc(unidad) : '—'}</div>
+    <div><span class="muted">Precio:</span> ${usd(precio)}</div></div>`;
+  if (!x.ok) h += `<div class="warnbox">La inicial de ${usd(inicial)} no alcanza para la inscripción y la 1ra cuota del grupo avanzado. Elige otro producto o sube la inicial.</div>`;
+  if (x.falta > 0.005) h += `<div class="warnbox">Esta opción necesita una inicial de ${usd(x.inicial)}; el cliente indicó ${usd(inicial)} (faltan ${usd(x.falta)}).</div>`;
+  h += `<div class="hero"><div class="t">${NOMBRES[key]}</div><div class="k">
+    <div><div class="l">Inicial</div><div class="v">${usd(x.inicial)}</div></div>
+    <div><div class="l">Cuota mensual</div><div class="v">${usd(Math.max(x.cuota,0))}</div><div class="s">S/ ${fmt(Math.max(x.cuota,0)*x.tc)}</div></div>
+    <div><div class="l">Plazo</div><div class="v">${x.plazo}</div></div>
+    <div><div class="l">Total a pagar</div><div class="v">${usd(x.total)}</div><div class="s">Entrega: ${x.entrega.toLowerCase()}</div></div></div></div>`;
+  h += '<h4>Detalle</h4><table>' + x.det.map(r=>`<tr><td>${r[0]}</td><td class="n">${r[1]}</td></tr>`).join('') + '</table>';
+  if ($('pfComp').checked){
+    h += '<h4>Otras opciones</h4><div style="overflow-x:auto"><table><tr><th>Producto</th><th class="n">Inicial</th><th class="n">Cuota</th><th class="n">Plazo</th><th class="n">Total</th></tr>';
+    Object.keys(ops).filter(k=>k!==key && ops[k].ok).forEach(k=>{ const y = ops[k];
+      h += `<tr><td>${NOMBRES[k]}</td><td class="n">${fmt(y.inicial)}</td><td class="n">${fmt(y.cuota)}</td><td class="n">${y.plazo.replace(/ \+ 1 final de US\$ [\d,.]+/,' + 1')}</td><td class="n">${fmt(y.total)}</td></tr>`; });
+    h += '</table></div>';
+  }
+  h += `<h4>Requisitos</h4><div>DNI, recibo de servicios, sustento de ingresos y formulario de solicitud.</div>`;
+  h += `<div class="fine">Montos en US$ con IGV según tarifario vigente. Cálculo referencial, sujeto a evaluación, contrato y cronograma oficial. Desgravamen (≈0.05% mensual del certificado) y seguro vehicular aparte. En Auto Ahorro la entrega es por remate y depende del resultado de la asamblea. Soles al tipo de cambio de la tabla (80 meses S/ 3.403; 60 meses S/ 3.781).</div>`;
+  if (asNom || asCel || asLug){
+    h += `<div class="ft"><div>${asNom ? '<b>'+esc(asNom)+'</b> · Asesor comercial' : 'Asesor comercial'}</div><div class="muted">${[asCel && 'WhatsApp '+esc(asCel), asLug && esc(asLug)].filter(Boolean).join(' · ')}</div></div>`;
+  }
+  sh.innerHTML = h;
+}
+
+// Captura la hoja a ancho A4 fijo (también en celular)
+async function capturar(){
+  if (typeof html2canvas !== 'function') throw new Error('lib');
+  const clone = $('sheet').cloneNode(true);
+  clone.removeAttribute('id'); clone.classList.add('cap');
+  const holder = document.createElement('div');
+  holder.style.cssText = 'position:absolute;left:-10000px;top:0;width:794px';
+  holder.appendChild(clone); document.body.appendChild(holder);
+  try { return await html2canvas(clone, { scale:2, backgroundColor:'#ffffff', useCORS:true }); }
+  finally { holder.remove(); }
+}
+function nombreArchivo(ext){
+  const c = $('cliente').value.trim().replace(/[^\wÁÉÍÓÚÑáéíóúñ -]/g,'').replace(/\s+/g,'-');
+  return 'Proforma-' + siguienteNumero().txt + (c ? '-'+c : '') + '.' + ext;
+}
+function consumirNumero(){ const s = siguienteNumero(); store.set('pf_num_'+s.y, String(s.n)); }
+function bajar(blob, name){
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href), 4000);
+}
+const pngBlob = canvas => new Promise(r=>canvas.toBlob(r,'image/png'));
+async function hacerPdf(){
+  const canvas = await capturar();
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF({ unit:'mm', format:'a4', orientation:'portrait' });
+  let w = 190, h = canvas.height * w / canvas.width;
+  if (h > 277){ h = 277; w = canvas.width * h / canvas.height; }
+  pdf.addImage(canvas.toDataURL('image/jpeg',0.95), 'JPEG', (210-w)/2, 10, w, h);
+  return pdf.output('blob');
+}
+async function accion(tipo){
+  const msg = $('pfMsg'); msg.textContent = 'Generando…';
+  try {
+    if (tipo === 'pdf'){ const name = nombreArchivo('pdf'); bajar(await hacerPdf(), name); consumirNumero(); msg.textContent = 'PDF descargado: ' + name; }
+    if (tipo === 'png'){ const name = nombreArchivo('png'); bajar(await pngBlob(await capturar()), name); consumirNumero(); msg.textContent = 'Imagen descargada: ' + name; }
+    if (tipo === 'share'){
+      const name = nombreArchivo('png'), file = new File([await pngBlob(await capturar())], name, {type:'image/png'});
+      if (navigator.canShare && navigator.canShare({files:[file]})){ await navigator.share({files:[file], title:'Proforma'}); consumirNumero(); msg.textContent = 'Proforma compartida.'; }
+      else { bajar(file, name); consumirNumero(); msg.textContent = 'Este navegador no permite compartir; se descargó la imagen: ' + name; }
+    }
+    renderProforma();
+  } catch(e){
+    if (e && e.name === 'AbortError'){ msg.textContent = ''; return; }
+    msg.textContent = e && e.message === 'lib' ? 'No se pudo cargar el generador. Revisa tu conexión a internet y vuelve a intentar.' : 'No se pudo generar la proforma. Vuelve a intentar.';
+  }
+}
+$('btnPdf').addEventListener('click', ()=>accion('pdf'));
+$('btnPng').addEventListener('click', ()=>accion('png'));
+$('btnShare').addEventListener('click', ()=>accion('share'));
+
+// Datos del asesor: solo en este equipo
+['asNom','asCel','asLug'].forEach(id=>{ const v = store.get('asesor_'+id); if (v) $(id).value = v;
+  $(id).addEventListener('input', ()=>{ store.set('asesor_'+id, $(id).value); renderProforma(); }); });
+['pfProd','pfComp','pfCel','pfVal'].forEach(id=>{ $(id).addEventListener('input', renderProforma); $(id).addEventListener('change', renderProforma); });
+
 ['precio','inicial','unidad','cliente'].forEach(id=>document.getElementById(id).addEventListener('input',render));
 render();
 </script>
