@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Calculadora Maquilink Arequipa</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+:root{
+  --bg:#f5f6f8; --card:#ffffff; --ink:#1b1f24; --muted:#5d6670; --line:#e1e5ea;
+  --accent:#0b6bcb; --accent-soft:#e8f1fb; --ok:#1d7a46; --ok-soft:#e7f5ec; --warn:#a15c00; --warn-soft:#fdf2e1; --bad:#b42318; --bad-soft:#fdecea;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#101318; --card:#181c22; --ink:#e8ebef; --muted:#9aa3ad; --line:#2a3038;
+    --accent:#5aa7f0; --accent-soft:#172a3d; --ok:#5fcf8f; --ok-soft:#14291d; --warn:#f0b35a; --warn-soft:#2d2210; --bad:#f28b82; --bad-soft:#2e1614;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#101318; --card:#181c22; --ink:#e8ebef; --muted:#9aa3ad; --line:#2a3038;
+  --accent:#5aa7f0; --accent-soft:#172a3d; --ok:#5fcf8f; --ok-soft:#14291d; --warn:#f0b35a; --warn-soft:#2d2210; --bad:#f28b82; --bad-soft:#2e1614;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:1100px;margin:0 auto;padding-block:20px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.card,.grid2>*{min-width:0}
+h1{font-size:22px;margin:0 0 4px}
+.sub{color:var(--muted);margin:0 0 18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:16px}
+.card h2{font-size:17px;margin:0 0 4px}
+.card h3{font-size:14px;margin:16px 0 8px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+label{display:block;font-size:13px;color:var(--muted);margin-bottom:4px}
+input,select{width:100%;padding:10px 12px;font-size:16px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
+input:focus,select:focus{outline:2px solid var(--accent);outline-offset:0}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr));gap:16px}
+@media (max-width:480px){.card{padding:14px}.kpi .v{font-size:17px}h1{font-size:20px}}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.chip{background:var(--accent-soft);color:var(--accent);border-radius:999px;padding:4px 10px;font-weight:600;font-size:13px}
+table{width:100%;border-collapse:collapse}
+td,th{padding:7px 4px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-size:12px;color:var(--muted);font-weight:600}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.tot td{font-weight:700;border-bottom:none}
+.big{font-size:26px;font-weight:700;font-variant-numeric:tabular-nums}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:10px 0}
+.kpi{background:var(--bg);border-radius:10px;padding:10px 12px}
+.kpi .l{font-size:12px;color:var(--muted)}
+.kpi .v{font-size:19px;font-weight:700;font-variant-numeric:tabular-nums}
+.kpi .s{font-size:12px;color:var(--muted)}
+.opt{border:1px solid var(--line);border-radius:10px;padding:12px;margin-top:10px}
+.opt.best{border-color:var(--ok);background:var(--ok-soft)}
+.tag{display:inline-block;font-size:12px;font-weight:700;padding:2px 8px;border-radius:6px}
+.tag.ok{background:var(--ok-soft);color:var(--ok)}
+.tag.warn{background:var(--warn-soft);color:var(--warn)}
+.tag.bad{background:var(--bad-soft);color:var(--bad)}
+.msg{border-radius:8px;padding:10px 12px;margin:10px 0;font-size:14px}
+.msg.warn{background:var(--warn-soft);color:var(--warn)}
+.msg.bad{background:var(--bad-soft);color:var(--bad)}
+.msg.ok{background:var(--ok-soft);color:var(--ok)}
+.note{font-size:12.5px;color:var(--muted)}
+.soles{color:var(--muted);font-size:12px;font-weight:400}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+button{padding:9px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:14px;cursor:pointer}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+@media print{.noprint{display:none}body{background:#fff}.card{break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Calculadora Maquilink Arequipa</h1>
+  <p class="sub">Auto Ahorro grupo avanzado (80 meses, ingreso en la cuota 30) y Auto Pronto (60 meses) adelantando 24 o 18 cuotas. Montos en US$ con IGV según tarifario.</p>
+
+  <div class="card noprint">
+    <div class="form">
+      <div><label for="unidad">Unidad (marca / modelo)</label><input id="unidad" placeholder="Ej. Toyota Yaris 2026"></div>
+      <div><label for="precio">Precio de la unidad (US$)</label><input id="precio" type="number" min="0" step="100" value="16000"></div>
+      <div><label for="inicial">Inicial del cliente (US$)</label><input id="inicial" type="number" min="0" step="100" value="8000"></div>
+      <div><label for="cliente">Cliente (opcional)</label><input id="cliente" placeholder="Nombre del cliente"></div>
+    </div>
+    <p class="note" style="margin:10px 0 0">Los certificados se eligen solos: la combinación que da el monto exacto o el más cercano por encima del precio (máx. US$ 72,000), con la menor cantidad de certificados.</p>
+  </div>
+
+  <div id="error"></div>
+  <div class="grid2">
+    <div class="card" id="ahorro"></div>
+    <div class="card" id="pronto"></div>
+  </div>
+
+  <div class="card">
+    <h2>Notas</h2>
+    <p class="note">Cálculo referencial, sujeto a evaluación, contrato y cronograma oficial. El desgravamen (≈0.05% mensual del certificado) y el seguro vehicular van aparte. En Auto Ahorro grupo avanzado la entrega es por remate: confirmar la adjudicación con el resultado de la asamblea. Montos en soles calculados con el tipo de cambio de cada tabla (80 meses S/ 3.403; 60 meses S/ 3.781).</p>  </div>
+</div>
+
+<script>
+// ===== Tablas oficiales (Tablas_Certificados_Maquimas.xlsx) =====
+const T80 = { tc:3.403, plazo:80, rows:[
+  [12000,566.40,190.71],[13500,637.20,205.19],[14500,684.40,220.39],[16000,755.20,243.19],[17000,802.40,258.39],
+  [18000,849.60,273.59],[19000,896.80,288.78],[20000,944.00,303.98],[21200,1000.64,322.23],[24000,1132.80,364.78]]};
+const T60 = { tc:3.781, plazo:60, rows:[
+  [12000,566.40,259.00],[13000,613.60,280.59],[14000,660.80,298.03],[16000,755.20,340.62],[17500,826.00,372.55],
+  [19000,896.80,404.49],[21000,991.20,447.05],[22000,1038.40,468.35],[23000,1085.60,489.62],[24000,1132.80,510.92]]};
+const MAX_UNIDAD = 72000;
+
+// ===== Reglas del Excel "calculo de cuotas de autopronto y autoahorro.xlsx" =====
+const AV = { ingreso:30, restantes:51 };   // grupo avanzado: entra en la cuota 30 → 51 cuotas (30..80)
+
+// Elige la combinación de certificados (con repetición) cuya suma sea >= precio y la más cercana; desempate: menos certificados
+function elegirCertificados(tabla, precio){
+  const rows = tabla.rows; let best = null;
+  const maxN = Math.ceil(MAX_UNIDAD / rows[0][0]);
+  function rec(start, combo, suma){
+    if (suma >= precio){
+      if (!best || suma < best.suma || (suma === best.suma && combo.length < best.combo.length)) best = {combo:[...combo], suma};
+      return;
+    }
+    if (combo.length >= maxN) return;
+    for (let i = start; i < rows.length; i++){ combo.push(rows[i]); rec(i, combo, suma + rows[i][0]); combo.pop(); }
+  }
+  rec(0, [], 0);
+  if (!best) return null;
+  // ordenar de mayor a menor para mostrar
+  best.combo.sort((a,b)=>b[0]-a[0]);
+  best.ins = best.combo.reduce((s,r)=>s+r[1],0);
+  best.cuota = best.combo.reduce((s,r)=>s+r[2],0);
+  return best;
+}
+
+const fmt = n => n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const usd = n => 'US$ ' + fmt(n);
+const pen = (n,tc) => `<span class="soles">S/ ${fmt(n*tc)}</span>`;
+const esc = s => s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function chips(sel){
+  const g = {};
+  sel.combo.forEach(r=>{ g[r[0]] = (g[r[0]]||0)+1; });
+  return '<div class="chips">' + Object.entries(g).sort((a,b)=>b[0]-a[0]).map(([v,n])=>`<span class="chip">${n>1?n+' × ':''}US$ ${Number(v).toLocaleString('en-US')}</span>`).join('') + '</div>';
+}
+function tablaCerts(sel, tc){
+  let h = '<table><tr><th>Certificado</th><th class="n">Inscripción</th><th class="n">Cuota mensual</th></tr>';
+  sel.combo.forEach(r=>{ h += `<tr><td>US$ ${r[0].toLocaleString('en-US')}</td><td class="n">${fmt(r[1])}</td><td class="n">${fmt(r[2])}</td></tr>`; });
+  if (sel.combo.length>1) h += `<tr class="tot"><td>Total US$ ${sel.suma.toLocaleString('en-US')}</td><td class="n">${fmt(sel.ins)}</td><td class="n">${fmt(sel.cuota)}</td></tr>`;
+  return h + '</table>';
+}
+
+function calcAhorro(precio, inicial){
+  const sel = elegirCertificados(T80, precio); const tc = T80.tc;
+  const cuotaAv = sel.cuota * T80.plazo / AV.restantes;        // =(H13*80)/51
+  const pagoIngreso = sel.ins + cuotaAv;                        // inscripción + 1ra cuota
+  const remate = inicial - pagoIngreso;                         // monto remate
+  const quedan = AV.restantes - 1;                              // 50 cuotas
+  const remateCuotasGrupo = remate / sel.cuota;                 // cuotas a remate (cuota de tabla)
+  const reduceCuota = cuotaAv - remate / quedan;                // mantener plazo y reducir cuota
+  const cuotasReducidas = remate / cuotaAv;
+  const plazoReducido = quedan - cuotasReducidas;               // reducir plazo y mantener cuota
+  const saldo = cuotaAv * quedan - remate;
+  const enteras = Math.floor(plazoReducido + 1e-9);
+  const ultima = saldo - enteras * cuotaAv;
+
+  let h = `<h2>Auto Ahorro – grupo avanzado</h2><p class="note" style="margin:0">80 meses · ingresa en la cuota ${AV.ingreso} · ${AV.restantes} cuotas por pagar</p>`;
+  h += '<h3>Certificados</h3>' + chips(sel) + tablaCerts(sel, tc);
+  if (sel.suma > precio) h += `<p class="note">Cubre US$ ${fmt(sel.suma)} (US$ ${fmt(sel.suma-precio)} sobre el precio).</p>`;
+  h += '<h3>Ingreso</h3><table>';
+  h += `<tr><td>Cuota de inscripción</td><td class="n">${usd(sel.ins)}</td></tr>`;
+  h += `<tr><td>1ra cuota grupo avanzado <span class="note">(${fmt(sel.cuota)} × 80 ÷ 51)</span></td><td class="n">${usd(cuotaAv)}</td></tr>`;
+  h += `<tr class="tot"><td>Pago al ingresar</td><td class="n">${usd(pagoIngreso)}<br>${pen(pagoIngreso,tc)}</td></tr>`;
+  h += `<tr><td>Inicial del cliente</td><td class="n">${usd(inicial)}</td></tr>`;
+  h += `<tr class="tot"><td>Monto para remate</td><td class="n">${usd(remate)}<br>${pen(remate,tc)}</td></tr></table>`;
+
+  if (remate <= 0){
+    h += `<div class="msg bad">La inicial no alcanza para inscripción + 1ra cuota. Necesita al menos ${usd(pagoIngreso)} y algo más para rematar.</div>`;
+    h += `<div class="kpis"><div class="kpi"><div class="l">Cuota sin remate</div><div class="v">${usd(cuotaAv)}</div><div class="s">${quedan} cuotas</div></div></div>`;
+    return h;
+  }
+  h += `<p class="note">El remate equivale a <b>${fmt(remateCuotasGrupo)}</b> cuotas del grupo (cuota de tabla ${fmt(sel.cuota)}) y adelanta <b>${fmt(cuotasReducidas)}</b> cuotas del grupo avanzado.</p>`;
+  if (plazoReducido <= 0) h +=`<div class="msg warn">El remate cubre todo el saldo.</div>`;
+
+  h += '<h3>Después de adjudicar</h3>';
+  h += `<div class="opt best"><span class="tag ok">Reducir cuota</span> <span class="note">mantiene el plazo</span>
+    <div class="kpis"><div class="kpi"><div class="l">Cuota mensual</div><div class="v">${usd(Math.max(reduceCuota,0))}</div><div class="s">${pen(Math.max(reduceCuota,0),tc)}</div></div>
+    <div class="kpi"><div class="l">Plazo</div><div class="v">${quedan} cuotas</div><div class="s">después de la 1ra</div></div>
+    <div class="kpi"><div class="l">Total restante</div><div class="v">${usd(Math.max(saldo,0))}</div></div></div></div>`;
+  h += `<div class="opt"><span class="tag warn">Reducir plazo</span> <span class="note">mantiene la cuota</span>
+    <div class="kpis"><div class="kpi"><div class="l">Cuota mensual</div><div class="v">${usd(cuotaAv)}</div><div class="s">${pen(cuotaAv,tc)}</div></div>
+    <div class="kpi"><div class="l">Plazo</div><div class="v">${fmt(Math.max(plazoReducido,0))} cuotas</div><div class="s">${enteras} cuotas${ultima>0.005?` + 1 final de ${usd(ultima)}`:''}</div></div>
+    <div class="kpi"><div class="l">Cuotas que se reducen</div><div class="v">${fmt(cuotasReducidas)}</div></div></div></div>`;
+  const total = inicial + Math.max(saldo,0);
+  h += `<p class="note">Total pagado por el cliente (inicial + saldo): <b>${usd(total)}</b> por un certificado de ${usd(sel.suma)}.</p>`;
+  return h;
+}
+
+function calcPronto(precio, inicial){
+  const sel = elegirCertificados(T60, precio); const tc = T60.tc; const c = sel.cuota;
+  const op = [
+    { n:24, adel:c*24, resto:36, cuota:c, formula:`cuota de tabla` },
+    { n:18, adel:c*18, resto:36, cuota:c*60/54, formula:`${fmt(c)} × 60 ÷ 54` }   // =G13*60/54
+  ];
+  let h = `<h2>Auto Pronto</h2><p class="note" style="margin:0">60 meses · entrega inmediata al adelantar cuotas</p>`;
+  h += '<h3>Certificados</h3>' + chips(sel) + tablaCerts(sel, tc);
+  if (sel.suma > precio) h += `<p class="note">Cubre US$ ${fmt(sel.suma)} (US$ ${fmt(sel.suma-precio)} sobre el precio).</p>`;
+  let elegido = null;
+  op.forEach(o=>{ o.entrada = sel.ins + o.adel; o.falta = o.entrada - inicial; o.total = o.entrada + o.cuota*o.resto; });
+  // recomendada: la de 24 si alcanza, si no la de 18 si alcanza
+  elegido = op.find(o=>o.falta<=0);
+  op.forEach(o=>{
+    const alcanza = o.falta <= 0;
+    h += `<div class="opt ${o===elegido?'best':''}"><span class="tag ${alcanza?'ok':'bad'}">Adelantando ${o.n} cuotas</span> ${o===elegido?'<span class="note">recomendada con su inicial</span>':''}
+      <table style="margin-top:8px">
+        <tr><td>Cuota de inscripción</td><td class="n">${usd(sel.ins)}</td></tr>
+        <tr><td>Adelanto ${o.n} cuotas <span class="note">(${o.n} × ${fmt(c)})</span></td><td class="n">${usd(o.adel)}</td></tr>
+        <tr class="tot"><td>Inicial necesaria</td><td class="n">${usd(o.entrada)}<br>${pen(o.entrada,tc)}</td></tr>
+      </table>
+      <div class="kpis"><div class="kpi"><div class="l">Cuota mensual</div><div class="v">${usd(o.cuota)}</div><div class="s">${pen(o.cuota,tc)} · ${o.formula}</div></div>
+      <div class="kpi"><div class="l">Plazo</div><div class="v">${o.resto} cuotas</div></div>
+      <div class="kpi"><div class="l">Total a pagar</div><div class="v">${usd(o.total)}</div></div></div>
+      ${alcanza ? `<div class="msg ok">Su inicial alcanza${o.falta<-0.005?`; le sobran ${usd(-o.falta)}`:''}.</div>` : `<div class="msg bad">Le faltan ${usd(o.falta)} de inicial.</div>`}
+    </div>`;
+  });
+  return h;
+}
+
+function render(){
+  const precio = parseFloat(document.getElementById('precio').value)||0;
+  const inicial = parseFloat(document.getElementById('inicial').value)||0;
+  const err = document.getElementById('error');
+  const A = document.getElementById('ahorro'), P = document.getElementById('pronto');
+  if (precio <= 0){ err.innerHTML = '<div class="msg warn">Ingresa el precio de la unidad.</div>'; A.innerHTML=P.innerHTML=''; return; }
+  if (precio > MAX_UNIDAD){ err.innerHTML = `<div class="msg bad">La unidad no puede pasar de US$ ${MAX_UNIDAD.toLocaleString('en-US')}.</div>`; A.innerHTML=P.innerHTML=''; return; }
+  const u = document.getElementById('unidad').value.trim(), cl = document.getElementById('cliente').value.trim();
+  err.innerHTML = (u||cl) ? `<div class="card" style="padding:12px 18px"><b>${esc(u||'Unidad')}</b> · ${usd(precio)} · inicial ${usd(inicial)}${cl?` · Cliente: ${esc(cl)}`:''}</div>` : '';
+  A.innerHTML = calcAhorro(precio, inicial);
+  P.innerHTML = calcPronto(precio, inicial);
+}
+['precio','inicial','unidad','cliente'].forEach(id=>document.getElementById(id).addEventListener('input',render));
+render();
+</script>
+
+</body>
+</html>
