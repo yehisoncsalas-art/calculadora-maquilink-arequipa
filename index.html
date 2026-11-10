@@ -5,25 +5,40 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Calculadora Maquilink Arequipa</title>
 <meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600&display=swap">
 <style>
+/* Cada producto tiene su color: Auto Ahorro = verde azulado (ahorro, paciencia), Auto Pronto = índigo (rapidez) */
 :root{
-  --bg:#f5f6f8; --card:#ffffff; --ink:#1b1f24; --muted:#5d6670; --line:#e1e5ea;
-  --accent:#0b6bcb; --accent-soft:#e8f1fb; --ok:#1d7a46; --ok-soft:#e7f5ec; --warn:#a15c00; --warn-soft:#fdf2e1; --bad:#b42318; --bad-soft:#fdecea;
+  --bg:#f3f5f8; --card:#ffffff; --ink:#151a21; --muted:#5a6472; --line:#dfe4ea;
+  --accent:#0b6bcb; --accent-soft:#e8f1fb; --ok:#1d7a46; --ok-soft:#e5f4ea; --warn:#9a5600; --warn-soft:#fcf0dc; --bad:#b42318; --bad-soft:#fdecea;
+  --ah:#0d7a6f; --ah-soft:#e2f4f1; --ah-line:#a7dcd3;
+  --ap:#4f46c8; --ap-soft:#ecebfc; --ap-line:#c5c1f3;
+  --f-display:"Sora",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-body:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#101318; --card:#181c22; --ink:#e8ebef; --muted:#9aa3ad; --line:#2a3038;
+    --bg:#0f1217; --card:#171b22; --ink:#e9ecf0; --muted:#9ba4b0; --line:#2a3039;
     --accent:#5aa7f0; --accent-soft:#172a3d; --ok:#5fcf8f; --ok-soft:#14291d; --warn:#f0b35a; --warn-soft:#2d2210; --bad:#f28b82; --bad-soft:#2e1614;
+    --ah:#4fd1bf; --ah-soft:#10302c; --ah-line:#1f5a52;
+    --ap:#a5a0ff; --ap-soft:#1f1d45; --ap-line:#3b377a;
     color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
-  --bg:#101318; --card:#181c22; --ink:#e8ebef; --muted:#9aa3ad; --line:#2a3038;
+  --bg:#0f1217; --card:#171b22; --ink:#e9ecf0; --muted:#9ba4b0; --line:#2a3039;
   --accent:#5aa7f0; --accent-soft:#172a3d; --ok:#5fcf8f; --ok-soft:#14291d; --warn:#f0b35a; --warn-soft:#2d2210; --bad:#f28b82; --bad-soft:#2e1614;
+  --ah:#4fd1bf; --ah-soft:#10302c; --ah-line:#1f5a52;
+  --ap:#a5a0ff; --ap-soft:#1f1d45; --ap-line:#3b377a;
   color-scheme:dark;
 }
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 var(--f-body)}
+h1,h2,.card h2{font-family:var(--f-display);letter-spacing:-.015em}
+h1{font-weight:800}
+h2{font-weight:700}
 .wrap{max-width:1100px;margin:0 auto;padding-block:20px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .card,.grid2>*{min-width:0}
 h1{font-size:22px;margin:0 0 4px}
@@ -66,23 +81,33 @@ tr.tot td{font-weight:700;border-bottom:none}
 button{padding:9px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:14px;cursor:pointer}
 button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
 @media print{.noprint{display:none}body{background:#fff}.card{break-inside:avoid}}
-/* Resumen de opciones */
-.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(230px,100%),1fr));gap:12px}
-.tile{display:flex;flex-direction:column;gap:8px;text-align:left;padding:14px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font:inherit;cursor:pointer;min-width:0}
-.tile:hover{border-color:var(--accent)}
-.tile:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.tile.sel{border:2px solid var(--accent);padding:13px;background:var(--accent-soft)}
-.tile .nm{font-weight:700;font-size:15px}
-.tile .fam{font-size:12px;color:var(--muted)}
-.tile .cuota{font-size:26px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1}
-.tile .cuota small{font-size:13px;font-weight:400;color:var(--muted)}
-.tile dl{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;margin:0;font-size:13.5px}
+/* Resumen de opciones: un bloque por producto, cada uno con su color */
+.fams{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(440px,100%),1fr));gap:16px}
+.fam{--c:var(--ah);--cs:var(--ah-soft);--cl:var(--ah-line);border:1px solid var(--cl);border-radius:14px;overflow:hidden;background:var(--card);min-width:0}
+.fam.ap{--c:var(--ap);--cs:var(--ap-soft);--cl:var(--ap-line)}
+.fam-hd{background:var(--cs);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--cl)}
+.fam-hd .ttl{font-family:var(--f-display);font-weight:800;font-size:19px;color:var(--c);letter-spacing:-.02em;line-height:1.15}
+.fam-hd .ttl small{display:block;font-family:var(--f-body);font-weight:500;font-size:12.5px;color:var(--muted);letter-spacing:0}
+.fam-hd .pill{font-size:12px;font-weight:600;color:var(--c);border:1px solid var(--c);border-radius:999px;padding:3px 10px;white-space:nowrap}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(190px,100%),1fr));gap:10px;padding:12px}
+.tile{position:relative;display:flex;flex-direction:column;gap:10px;text-align:left;padding:14px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font:inherit;cursor:pointer;min-width:0;transition:border-color .15s,box-shadow .15s}
+.tile:hover{border-color:var(--c)}
+.tile:focus-visible{outline:2px solid var(--c);outline-offset:2px}
+.tile.sel{border-color:var(--c);box-shadow:0 0 0 2px var(--c);background:var(--cs)}
+.tile .nm{font-family:var(--f-display);font-weight:700;font-size:15.5px;letter-spacing:-.01em;padding-right:24px}
+.tile .check{position:absolute;top:12px;right:12px;width:20px;height:20px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:12px;font-weight:800;color:transparent}
+.tile.sel .check{background:var(--c);border-color:var(--c);color:var(--card)}
+.tile .cuota{font-family:var(--f-display);font-size:28px;font-weight:800;color:var(--c);font-variant-numeric:tabular-nums;line-height:1;letter-spacing:-.02em}
+.tile .cuota small{font-family:var(--f-body);font-size:13px;font-weight:500;color:var(--muted);letter-spacing:0}
+.tile .lbl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:-6px}
+.tile dl{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;margin:0;font-size:13.5px;border-top:1px dashed var(--line);padding-top:8px}
 .tile dt{color:var(--muted)}
 .tile dd{margin:0;text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
 .tile .badges{display:flex;flex-wrap:wrap;gap:6px}
-.tile.off{opacity:.6}
-details.det summary{cursor:pointer;font-weight:600;font-size:15px}
-details.det .sub{border:1px solid var(--line);border-radius:10px;padding:14px;min-width:0}
+.tile.off .cuota{color:var(--muted)}
+@media (prefers-reduced-motion:reduce){.tile{transition:none}}
+details.det summary{cursor:pointer;font-family:var(--f-display);font-weight:700;font-size:15px}
+details.det .subp{border:1px solid var(--line);border-radius:10px;padding:14px;min-width:0}
 /* Proforma: hoja de papel, siempre clara (se descarga como documento) */
 .pf-layout{display:grid;grid-template-columns:minmax(0,260px) minmax(0,1fr);gap:16px;align-items:start}
 @media (max-width:760px){.pf-layout{grid-template-columns:minmax(0,1fr)}}
@@ -101,8 +126,11 @@ details.det .sub{border:1px solid var(--line);border-radius:10px;padding:14px;mi
 .sheet .muted{color:var(--pm)}
 .sheet .meta{text-align:right;font-size:12px;color:var(--pm);white-space:nowrap}
 .sheet .who{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 18px;margin-bottom:14px}
-.sheet .hero{background:var(--pas);border:1px solid #c9dcf2;border-radius:8px;padding:14px 16px;margin-bottom:14px}
-.sheet .hero .t{color:var(--pa);font-weight:700;font-size:14px;margin-bottom:10px}
+.sheet .hero{background:#e2f4f1;border:1px solid #a7dcd3;border-radius:8px;padding:14px 16px;margin-bottom:14px}
+.sheet .hero .t{color:#0d7a6f;font-family:var(--f-display);font-weight:800;font-size:15px;margin-bottom:10px;letter-spacing:-.01em}
+.sheet .hero.ap{background:#ecebfc;border-color:#c5c1f3}
+.sheet .hero.ap .t{color:#4f46c8}
+.sheet .brand,.sheet .hero .v{font-family:var(--f-display)}
 .sheet .hero .k{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
 .sheet .hero .l{font-size:11px;color:var(--pm);text-transform:uppercase;letter-spacing:.04em}
 .sheet .hero .v{font-size:18px;font-weight:700;font-variant-numeric:tabular-nums}
@@ -145,13 +173,13 @@ details.det .sub{border:1px solid var(--line);border-radius:10px;padding:14px;mi
   <div class="card">
     <h2>Opciones para el cliente</h2>
     <p class="note" style="margin:0 0 12px">Toca una opción para usarla en la proforma.</p>
-    <div class="tiles" id="resumen"></div>
+    <div class="fams" id="resumen"></div>
   </div>
   <details class="card det" id="detalle">
     <summary>Ver detalle del cálculo</summary>
     <div class="grid2" style="margin-top:14px">
-      <div class="sub" id="ahorro"></div>
-      <div class="sub" id="pronto"></div>
+      <div class="subp" id="ahorro"></div>
+      <div class="subp" id="pronto"></div>
     </div>
   </details>
 
@@ -352,9 +380,9 @@ function renderResumen(precio, inicial){
   const viables = Object.keys(ops).filter(k=>ops[k].ok && !(ops[k].falta > 0.005));
   const menorCuota = viables.reduce((m,k)=> m===null || ops[k].cuota < ops[m].cuota ? k : m, null);
   const menorTotal = viables.reduce((m,k)=> m===null || ops[k].total < ops[m].total ? k : m, null);
-  const NOMBRE_CORTO = { ah_rc:['Reducir cuota','Auto Ahorro · grupo avanzado'], ah_rp:['Reducir plazo','Auto Ahorro · grupo avanzado'], ap_24:['Adelanta 24 cuotas','Auto Pronto'], ap_18:['Adelanta 18 cuotas','Auto Pronto'] };
-  $('resumen').innerHTML = Object.keys(ops).map(k=>{
-    const x = ops[k], [nm, fam] = NOMBRE_CORTO[k];
+  const NOMBRE_CORTO = { ah_rc:'Reducir cuota', ah_rp:'Reducir plazo', ap_24:'Adelanta 24 cuotas', ap_18:'Adelanta 18 cuotas' };
+  const tile = k => {
+    const x = ops[k];
     const falta = x.falta > 0.005, viable = x.ok && !falta;
     let estado;
     if (!x.ok) estado = `<span class="tag bad">Inicial insuficiente</span>`;
@@ -363,19 +391,26 @@ function renderResumen(precio, inicial){
     const extras = [];
     if (k === menorCuota) extras.push('<span class="tag ok">Cuota más baja</span>');
     if (k === menorTotal) extras.push('<span class="tag ok">Menor total</span>');
-    extras.push(x.entrega === 'Inmediata' ? '<span class="tag warn">Entrega inmediata</span>' : '<span class="tag warn">Entrega por remate</span>');
     return `<button type="button" class="tile${k===sel?' sel':''}${viable?'':' off'}" data-k="${k}" aria-pressed="${k===sel}">
-      <div><div class="nm">${nm}</div><div class="fam">${fam}</div></div>
+      <span class="check" aria-hidden="true">✓</span>
+      <div class="nm">${NOMBRE_CORTO[k]}</div>
+      <div class="lbl">Cuota mensual</div>
       <div class="cuota">${x.ok ? usd(Math.max(x.cuota,0)) : '—'} <small>/ mes</small></div>
       <dl>
         <dt>Inicial</dt><dd>${usd(x.inicial)}</dd>
         <dt>Plazo</dt><dd>${x.plazo.replace(/ \+ 1 final de US\$ [\d,.]+/,' + 1 final')}</dd>
         <dt>Total</dt><dd>${usd(x.total)}</dd>
-        <dt>Certificado</dt><dd>${x.cert}</dd>
       </dl>
       <div class="badges">${estado}${extras.join('')}</div>
     </button>`;
-  }).join('');
+  };
+  const familia = (cls, titulo, sub, pill, keys) => `<section class="fam ${cls}" aria-label="${titulo}">
+      <div class="fam-hd"><div class="ttl">${titulo}<small>${sub}</small></div><span class="pill">${pill}</span></div>
+      <div class="tiles">${keys.map(tile).join('')}</div>
+    </section>`;
+  $('resumen').innerHTML =
+    familia('ah', 'Auto Ahorro', `Grupo avanzado · 80 meses · certificado ${ops.ah_rc.cert}`, 'Entrega por remate', ['ah_rc','ah_rp']) +
+    familia('ap', 'Auto Pronto', `60 meses · certificado ${ops.ap_24.cert}`, 'Entrega inmediata', ['ap_24','ap_18']);
 }
 document.getElementById('resumen').addEventListener('click', e=>{
   const t = e.target.closest('.tile'); if (!t) return;
@@ -436,7 +471,7 @@ function renderProforma(){
     <div><span class="muted">Precio:</span> ${usd(precio)}</div></div>`;
   if (!x.ok) h += `<div class="warnbox">La inicial de ${usd(inicial)} no alcanza para la inscripción y la 1ra cuota del grupo avanzado. Elige otro producto o sube la inicial.</div>`;
   if (x.falta > 0.005) h += `<div class="warnbox">Esta opción necesita una inicial de ${usd(x.inicial)}; el cliente indicó ${usd(inicial)} (faltan ${usd(x.falta)}).</div>`;
-  h += `<div class="hero"><div class="t">${NOMBRES[key]}</div><div class="k">
+  h += `<div class="hero ${key.slice(0,2)}"><div class="t">${NOMBRES[key]}</div><div class="k">
     <div><div class="l">Inicial</div><div class="v">${usd(x.inicial)}</div></div>
     <div><div class="l">Cuota mensual</div><div class="v">${usd(Math.max(x.cuota,0))}</div><div class="s">S/ ${fmt(Math.max(x.cuota,0)*x.tc)}</div></div>
     <div><div class="l">Plazo</div><div class="v">${x.plazo}</div></div>
