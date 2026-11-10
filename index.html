@@ -66,6 +66,23 @@ tr.tot td{font-weight:700;border-bottom:none}
 button{padding:9px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:14px;cursor:pointer}
 button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
 @media print{.noprint{display:none}body{background:#fff}.card{break-inside:avoid}}
+/* Resumen de opciones */
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(230px,100%),1fr));gap:12px}
+.tile{display:flex;flex-direction:column;gap:8px;text-align:left;padding:14px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font:inherit;cursor:pointer;min-width:0}
+.tile:hover{border-color:var(--accent)}
+.tile:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.tile.sel{border:2px solid var(--accent);padding:13px;background:var(--accent-soft)}
+.tile .nm{font-weight:700;font-size:15px}
+.tile .fam{font-size:12px;color:var(--muted)}
+.tile .cuota{font-size:26px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1}
+.tile .cuota small{font-size:13px;font-weight:400;color:var(--muted)}
+.tile dl{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;margin:0;font-size:13.5px}
+.tile dt{color:var(--muted)}
+.tile dd{margin:0;text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+.tile .badges{display:flex;flex-wrap:wrap;gap:6px}
+.tile.off{opacity:.6}
+details.det summary{cursor:pointer;font-weight:600;font-size:15px}
+details.det .sub{border:1px solid var(--line);border-radius:10px;padding:14px;min-width:0}
 /* Proforma: hoja de papel, siempre clara (se descarga como documento) */
 .pf-layout{display:grid;grid-template-columns:minmax(0,260px) minmax(0,1fr);gap:16px;align-items:start}
 @media (max-width:760px){.pf-layout{grid-template-columns:minmax(0,1fr)}}
@@ -125,10 +142,18 @@ button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
   </div>
 
   <div id="error"></div>
-  <div class="grid2">
-    <div class="card" id="ahorro"></div>
-    <div class="card" id="pronto"></div>
+  <div class="card">
+    <h2>Opciones para el cliente</h2>
+    <p class="note" style="margin:0 0 12px">Toca una opción para usarla en la proforma.</p>
+    <div class="tiles" id="resumen"></div>
   </div>
+  <details class="card det" id="detalle">
+    <summary>Ver detalle del cálculo</summary>
+    <div class="grid2" style="margin-top:14px">
+      <div class="sub" id="ahorro"></div>
+      <div class="sub" id="pronto"></div>
+    </div>
+  </details>
 
   <div class="card">
     <h2>Proforma</h2>
@@ -311,14 +336,51 @@ function render(){
   const inicial = parseFloat(document.getElementById('inicial').value)||0;
   const err = document.getElementById('error');
   const A = document.getElementById('ahorro'), P = document.getElementById('pronto');
-  if (precio <= 0){ err.innerHTML = '<div class="msg warn">Ingresa el precio de la unidad.</div>'; A.innerHTML=P.innerHTML=''; renderProforma(); return; }
-  if (precio > MAX_UNIDAD){ err.innerHTML = `<div class="msg bad">La unidad no puede pasar de US$ ${MAX_UNIDAD.toLocaleString('en-US')}.</div>`; A.innerHTML=P.innerHTML=''; renderProforma(); return; }
+  if (precio <= 0){ err.innerHTML = '<div class="msg warn">Ingresa el precio de la unidad.</div>'; A.innerHTML=P.innerHTML=''; $('resumen').innerHTML=''; renderProforma(); return; }
+  if (precio > MAX_UNIDAD){ err.innerHTML = `<div class="msg bad">La unidad no puede pasar de US$ ${MAX_UNIDAD.toLocaleString('en-US')}.</div>`; A.innerHTML=P.innerHTML=''; $('resumen').innerHTML=''; renderProforma(); return; }
   const u = document.getElementById('unidad').value.trim(), cl = document.getElementById('cliente').value.trim();
   err.innerHTML = (u||cl) ? `<div class="card" style="padding:12px 18px"><b>${esc(u||'Unidad')}</b> · ${usd(precio)} · inicial ${usd(inicial)}${cl?` · Cliente: ${esc(cl)}`:''}</div>` : '';
   A.innerHTML = calcAhorro(precio, inicial);
   P.innerHTML = calcPronto(precio, inicial);
+  renderResumen(precio, inicial);
   renderProforma();
 }
+
+// Resumen: solo lo que necesitan el asesor y el cliente
+function renderResumen(precio, inicial){
+  const ops = opciones(precio, inicial), sel = $('pfProd').value;
+  const viables = Object.keys(ops).filter(k=>ops[k].ok && !(ops[k].falta > 0.005));
+  const menorCuota = viables.reduce((m,k)=> m===null || ops[k].cuota < ops[m].cuota ? k : m, null);
+  const menorTotal = viables.reduce((m,k)=> m===null || ops[k].total < ops[m].total ? k : m, null);
+  const NOMBRE_CORTO = { ah_rc:['Reducir cuota','Auto Ahorro · grupo avanzado'], ah_rp:['Reducir plazo','Auto Ahorro · grupo avanzado'], ap_24:['Adelanta 24 cuotas','Auto Pronto'], ap_18:['Adelanta 18 cuotas','Auto Pronto'] };
+  $('resumen').innerHTML = Object.keys(ops).map(k=>{
+    const x = ops[k], [nm, fam] = NOMBRE_CORTO[k];
+    const falta = x.falta > 0.005, viable = x.ok && !falta;
+    let estado;
+    if (!x.ok) estado = `<span class="tag bad">Inicial insuficiente</span>`;
+    else if (falta) estado = `<span class="tag bad">Faltan ${usd(x.falta)}</span>`;
+    else estado = `<span class="tag ok">Inicial alcanza</span>`;
+    const extras = [];
+    if (k === menorCuota) extras.push('<span class="tag ok">Cuota más baja</span>');
+    if (k === menorTotal) extras.push('<span class="tag ok">Menor total</span>');
+    extras.push(x.entrega === 'Inmediata' ? '<span class="tag warn">Entrega inmediata</span>' : '<span class="tag warn">Entrega por remate</span>');
+    return `<button type="button" class="tile${k===sel?' sel':''}${viable?'':' off'}" data-k="${k}" aria-pressed="${k===sel}">
+      <div><div class="nm">${nm}</div><div class="fam">${fam}</div></div>
+      <div class="cuota">${x.ok ? usd(Math.max(x.cuota,0)) : '—'} <small>/ mes</small></div>
+      <dl>
+        <dt>Inicial</dt><dd>${usd(x.inicial)}</dd>
+        <dt>Plazo</dt><dd>${x.plazo.replace(/ \+ 1 final de US\$ [\d,.]+/,' + 1 final')}</dd>
+        <dt>Total</dt><dd>${usd(x.total)}</dd>
+        <dt>Certificado</dt><dd>${x.cert}</dd>
+      </dl>
+      <div class="badges">${estado}${extras.join('')}</div>
+    </button>`;
+  }).join('');
+}
+document.getElementById('resumen').addEventListener('click', e=>{
+  const t = e.target.closest('.tile'); if (!t) return;
+  $('pfProd').value = t.dataset.k; render();
+});
 
 // ===== Proforma =====
 const $ = id => document.getElementById(id);
@@ -337,13 +399,13 @@ function opciones(precio, inicial){
   const plazoRp = a.enteras + (a.ultima > 0.005 ? ' cuotas + 1 final de ' + usd(a.ultima) : ' cuotas');
   const baseA = [['Certificado(s) 80 meses', certTxt(a.sel)], ['Cuota de inscripción', usd(a.sel.ins)], ['1ra cuota grupo avanzado (al ingresar)', usd(a.cuotaAv)], ['Monto para remate', usd(Math.max(a.remate,0))]];
   const o = {
-    ah_rc: { ok:okA, tc:T80.tc, inicial, cuota:a.reduceCuota, plazo:a.quedan+' cuotas', total:inicial+a.saldo, entrega:'Por remate',
+    ah_rc: { ok:okA, cert:certTxt(a.sel), tc:T80.tc, inicial, cuota:a.reduceCuota, plazo:a.quedan+' cuotas', total:inicial+a.saldo, entrega:'Por remate',
       det:[...baseA, ['Cuota después de adjudicar', usd(a.reduceCuota)+' × '+a.quedan]] },
-    ah_rp: { ok:okA, tc:T80.tc, inicial, cuota:a.cuotaAv, plazo:plazoRp, total:inicial+a.saldo, entrega:'Por remate',
+    ah_rp: { ok:okA, cert:certTxt(a.sel), tc:T80.tc, inicial, cuota:a.cuotaAv, plazo:plazoRp, total:inicial+a.saldo, entrega:'Por remate',
       det:[...baseA, ['Cuotas que se reducen', fmt(a.cuotasReducidas)], ['Cuota después de adjudicar', usd(a.cuotaAv)]] }
   };
   p.op.forEach(x=>{
-    o['ap_'+x.n] = { ok:true, falta:x.falta, tc:T60.tc, inicial:x.entrada, cuota:x.cuota, plazo:x.resto+' cuotas', total:x.total, entrega:'Inmediata',
+    o['ap_'+x.n] = { ok:true, cert:certTxt(p.sel), falta:x.falta, tc:T60.tc, inicial:x.entrada, cuota:x.cuota, plazo:x.resto+' cuotas', total:x.total, entrega:'Inmediata',
       det:[['Certificado(s) 60 meses', certTxt(p.sel)], ['Cuota de inscripción', usd(p.sel.ins)], ['Adelanto de '+x.n+' cuotas', usd(x.adel)], ['Inicial necesaria', usd(x.entrada)], ['Cuota mensual', usd(x.cuota)+' × '+x.resto]] };
   });
   return o;
@@ -447,7 +509,8 @@ $('btnShare').addEventListener('click', ()=>accion('share'));
 // Datos del asesor: solo en este equipo
 ['asNom','asCel','asLug'].forEach(id=>{ const v = store.get('asesor_'+id); if (v) $(id).value = v;
   $(id).addEventListener('input', ()=>{ store.set('asesor_'+id, $(id).value); renderProforma(); }); });
-['pfProd','pfComp','pfCel','pfVal'].forEach(id=>{ $(id).addEventListener('input', renderProforma); $(id).addEventListener('change', renderProforma); });
+$('pfProd').addEventListener('change', render);
+['pfComp','pfCel','pfVal'].forEach(id=>{ $(id).addEventListener('input', renderProforma); $(id).addEventListener('change', renderProforma); });
 
 ['precio','inicial','unidad','cliente'].forEach(id=>document.getElementById(id).addEventListener('input',render));
 render();
