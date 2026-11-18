@@ -205,6 +205,11 @@ details.det .subp{border:1px solid var(--line);border-radius:10px;padding:14px;m
           <div class="row"><label for="inicial">Inicial <span class="pct" id="pctIni"></span></label><div class="num"><span>US$</span><input id="inicial" type="number" min="0" step="100" value="8000" inputmode="numeric"></div></div>
           <input type="range" id="inicialR" min="0" max="16000" step="100" value="8000" aria-label="Inicial del cliente">
         </div>
+        <div class="field-r">
+          <div class="row"><label for="avance">Avance del grupo <span class="pct">· Auto Ahorro</span></label><div class="num" style="max-width:120px"><input id="avance" type="number" min="20" max="34" step="1" value="29" inputmode="numeric"><span>cuotas</span></div></div>
+          <input type="range" id="avanceR" min="20" max="34" step="1" value="29" aria-label="Avance del grupo">
+          <p class="note" style="margin:4px 0 0" id="avanceTxt"></p>
+        </div>
         <div class="form2">
           <div><label for="unidad">Unidad (marca / modelo)</label><input id="unidad" placeholder="Ej. Toyota Yaris 2026"></div>
           <div><label for="cliente">Cliente (opcional)</label><input id="cliente" placeholder="Nombre del cliente"></div>
@@ -276,7 +281,13 @@ const T60 = { tc:3.781, plazo:60, rows:[
 const MAX_UNIDAD = 72000;
 
 // ===== Reglas del Excel "calculo de cuotas de autopronto y autoahorro.xlsx" =====
-const AV = { ingreso:30, restantes:51 };   // grupo avanzado: entra en la cuota 30 → 51 cuotas (30..80)
+// Grupo avanzado: el grupo lleva entre 20 y 34 cuotas de avance (29 por defecto).
+// Entra en la cuota avance+1 y paga 80-avance cuotas (la de ingreso + el resto); las cuotas ya pasadas se prorratean.
+const AV = {
+  get avance(){ const v = parseInt(document.getElementById('avance').value, 10); return Math.min(34, Math.max(20, isNaN(v) ? 29 : v)); },
+  get ingreso(){ return this.avance + 1; },
+  get restantes(){ return 80 - this.avance; }
+};
 
 // Elige la combinación de certificados (con repetición) cuya suma sea >= precio y la más cercana; desempate: menos certificados
 function elegirCertificados(tabla, precio){
@@ -433,11 +444,12 @@ function renderResumen(precio, inicial){
   const menor = (campo) => viables.reduce((m,k)=> m===null || ops[k][campo] < ops[m][campo] ? k : m, null);
   const menorCuota = menor('cuota'), menorTotal = menor('total');
 
-  $('pctIni').textContent = precio > 0 ? '· ' + Math.round(inicial / precio * 100) + '% del precio' : '';
+  $('avanceTxt').textContent = `Entra en la cuota ${AV.ingreso} y paga ${AV.restantes} cuotas: 1 al ingresar + ${AV.restantes - 1} después.`;
+  $('pctIni').textContent =precio > 0 ? '· ' + Math.round(inicial / precio * 100) + '% del precio' : '';
 
   $('hero').className = 'hero-card ' + f;
   $('hero').innerHTML = `
-    <div class="r1"><div><div class="fam">${f==='ah' ? 'Auto Ahorro · grupo avanzado' : 'Auto Pronto · 60 meses'}</div><div class="pn">${LARGO[sel]}</div></div>
+    <div class="r1"><div><div class="fam">${f==='ah' ? 'Auto Ahorro · entra en la cuota ' + AV.ingreso : 'Auto Pronto · 60 meses'}</div><div class="pn">${LARGO[sel]}</div></div>
       <span class="ent">${x.entrega === 'Inmediata' ? 'Entrega inmediata' : 'Entrega por remate'}</span></div>
     <div><div class="big">${x.ok ? usd(Math.max(x.cuota,0)) : '—'} <small>/ mes</small></div>
       ${x.ok ? `<div class="pen">S/ ${fmt(Math.max(x.cuota,0) * x.tc)} al mes</div>` : ''}</div>
@@ -502,7 +514,7 @@ function opciones(precio, inicial){
   const a = datosAhorro(precio, inicial), p = datosPronto(precio, inicial);
   const okA = a.remate > 0;
   const plazoRp = a.enteras + (a.ultima > 0.005 ? ' cuotas + 1 final de ' + usd(a.ultima) : ' cuotas');
-  const baseA = [['Certificado(s) 80 meses', certTxt(a.sel)], ['Cuota de inscripción', usd(a.sel.ins)], ['1ra cuota grupo avanzado (al ingresar)', usd(a.cuotaAv)], ['Monto para remate', usd(Math.max(a.remate,0))]];
+  const baseA = [['Certificado(s) 80 meses', certTxt(a.sel)], ['Ingreso al grupo', `cuota ${AV.ingreso} de 80 (grupo con ${AV.avance} cuotas de avance)`],['Cuota de inscripción', usd(a.sel.ins)], ['1ra cuota grupo avanzado (al ingresar)', usd(a.cuotaAv)], ['Monto para remate', usd(Math.max(a.remate,0))]];
   const o = {
     ah_rc: { ok:okA, cert:certTxt(a.sel), tc:T80.tc, inicial, cuota:a.reduceCuota, plazo:a.quedan+' cuotas', total:inicial+a.saldo, entrega:'Por remate',
       det:[...baseA, ['Cuota después de adjudicar', usd(a.reduceCuota)+' × '+a.quedan]] },
@@ -616,6 +628,11 @@ $('btnShare').addEventListener('click', ()=>accion('share'));
   $(id).addEventListener('input', ()=>{ store.set('asesor_'+id, $(id).value); renderProforma(); }); });
 $('pfProd').addEventListener('change', render);
 ['pfComp','pfCel','pfVal'].forEach(id=>{ $(id).addEventListener('input', renderProforma); $(id).addEventListener('change', renderProforma); });
+
+// Avance del grupo: campo y barra sincronizados
+$('avanceR').addEventListener('input', ()=>{ $('avance').value = $('avanceR').value; render(); });
+$('avance').addEventListener('input', ()=>{ $('avanceR').value = AV.avance; render(); });
+$('avance').addEventListener('change', ()=>{ $('avance').value = AV.avance; $('avanceR').value = AV.avance; render(); });
 
 ['precio','inicial','unidad','cliente'].forEach(id=>document.getElementById(id).addEventListener('input',render));
 render();
